@@ -1,5 +1,5 @@
 # Teohook-Script-Growtopia
 
 # source script
-https://github.com/raynielm
-https://github.com/Deltcrypt1809
+* https://github.com/raynielm
+* https://github.com/Deltcrypt1809
