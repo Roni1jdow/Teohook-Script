@@ -1,9 +1,7 @@
 removeHook("toe")
 
 function toes()
-
-ImGui.Begin("Useful menu edited by mandq")
-
+ImGui.Begin("KETUAKULI")
 ImGui.Text("Command's")
 
 if ImGui.Button("Turn ON Command /fossil") then-- remove the hook incase you execute again/are testing
@@ -37,7 +35,8 @@ if ImGui.Button("Turn OFF /fossil") then
 removeHook("fossilFinder")
 end
 
-ImGui.Text("")
+
+ImGui.Text("WARP")
 
 if ImGui.Button("Turn ON Command /warp") then
 function hook(packet, type)
@@ -47,7 +46,7 @@ if text:find("/") then
 cmd = text:gsub("/", "")
 if cmd:find("warp ") then
 world = cmd:gsub("warp ", "")
-log("`$Magically warping to world`5 "..world.."`$...")
+log("`$Loading to world`5 "..world.."`$...")
 sendPacket(false, "action|join_request\nname|"..world, 3)
 return true
 end
@@ -62,24 +61,7 @@ if ImGui.Button("Turn OFF /warp") then
 removeHook("warphook")
 end
 
-ImGui.Text("\nOther's")
-removeHook("hook_type_5")
-if ImGui.Button("Drop All") then
-function hook(varlist)
-if varlist[0]:find("OnDialogRequest") and varlist[1]:find("end_dialog|drop_item") then
-return true
-end
-end
-
-addHook(5, "hook_type_5", hook)
-
-for k,v in ipairs(getInventory()) do
-sendPacket(false,"action|drop\n|itemID|"..v.id,2)
-sendPacket(false,"action|dialog_return\ndialog_name|drop_item\nitemID|"..v.id.."|\ncount|"..v.count,2)
-end
-end
-
-ImGui.Text("")
+ImGui.Text("DROP")
 
 if ImGui.Button("Turn ON Fast Drop") then
 function hook2(varlist)
@@ -102,7 +84,7 @@ if ImGui.Button("Turn OFF Fast Drop") then
 removeHook("trashdrop")
 end
 
-ImGui.Text("\n\n\n")
+ImGui.Text("OFF")
 
 if ImGui.Button("Unhook all") then
 removeHooks()
@@ -111,7 +93,77 @@ end
 if ImGui.Button("Unhook Menu") then
 removeHook("toe")
 end
+ImGui.Text("GROWSCAN")
+ if ImGui.Button("placed items") then
+function round(n)
+    return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
+end
+
+store1 = {}
+
+for k,v in pairs(getTiles()) do
+    id = v.fg
+    if store1[v.fg] == nil then
+        store1[v.fg] = {id = v.fg, qty = 1}
+    else
+        store1[v.fg].qty = store1[v.fg].qty + 1
+    end
+    if store1[v.bg] == nil then
+        store1[v.bg] = {id = v.bg, qty = 1}
+    else
+        store1[v.bg].qty = store1[v.bg].qty + 1
+    end
+end
+
+placedshit = "add_spacer|small|"
+for _,tile in pairs(store1) do
+    count = round(tile.qty)
+    placedshit =
+        placedshit ..
+        "\nadd_label_with_icon|small|`o: " ..
+            getItemInfo(tile.id).name .. " : " .. count .. "``|left|" .. tostring(tile.id)
+end
+
+varlist = {}
+varlist[0] = "OnDialogRequest"
+varlist[1] = "set_default_color|`o\nadd_label_with_icon|big|growscan``|left|6016\n"..placedshit.."\nadd_quick_exit"
+sendVarlist(varlist)
+end
+
+ if ImGui.Button("floating items") then
+function round(n)
+    return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
+end
+
+store1 = {}
+
+for k, v in pairs(getObjects()) do
+    id = v.id
+    if store1[v.id] == nil then
+        store1[v.id] = {id = v.id, qty = v.count}
+    else
+        store1[v.id].qty = store1[v.id].qty + v.count
+    end
+end
+
+droppedshit = "add_spacer|small|"
+for _, object in pairs(store1) do
+    count = round(object.qty)
+    droppedshit =
+        droppedshit ..
+        "\nadd_label_with_icon|small|`o: " ..
+            getItemInfo(object.id).name .. " : " .. count .. "``|left|" .. tostring(object.id)
+end
+
+varlist = {}
+varlist[0] = "OnDialogRequest"
+varlist[1] = "set_default_color|`o\nadd_label_with_icon|big|growscan``|left|6016\n" .. droppedshit .. "\nadd_quick_exit"
+
+sendVarlist(varlist)
+end
 
 ImGui.End()
 end
 addHook("Render", "toe", toes)
+
+
